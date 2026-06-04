@@ -1,0 +1,71 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "UTMC login",
+        "menu_options": {
+          "use_saved": "Use saved credentials ({username})",
+          "enter_new": "Enter different credentials"
+        }
+      },
+      "enter_new": {
+        "title": "UTMC login"
+      },
+      "credentials": {
+        "title": "UTMC login",
+        "description": "{account_hint}",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "carpark": {
+        "title": "Select car park",
+        "description": "Choose a car park with live occupancy data. Already configured car parks are hidden.",
+        "data": {
+          "carpark_id": "Car park"
+        }
+      },
+      "reconfigure": {
+        "title": "Update UTMC credentials",
+        "description": "Update your netraveldata.co.uk login. This applies to all Northeast Car Parks devices.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid username or password",
+      "cannot_connect": "Could not connect to the UTMC API",
+      "no_carparks": "No car parks with live data were returned for this account",
+      "all_configured": "All available car parks are already configured"
+    },
+    "abort": {
+      "already_configured": "This car park is already configured",
+      "reconfigure_successful": "Credentials updated successfully"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "short_description": {
+        "name": "Name"
+      },
+      "long_description": {
+        "name": "Address"
+      },
+      "capacity": {
+        "name": "Capacity"
+      },
+      "occupancy": {
+        "name": "Occupancy"
+      },
+      "spaces_free": {
+        "name": "Spaces free"
+      },
+      "state_description": {
+        "name": "State"
+      }
+    }
+  }
+}

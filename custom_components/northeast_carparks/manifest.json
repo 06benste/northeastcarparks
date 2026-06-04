@@ -1,0 +1,12 @@
+{
+  "domain": "northeast_carparks",
+  "name": "Northeast Car Parks",
+  "codeowners": ["@06benste"],
+  "config_flow": true,
+  "documentation": "https://github.com/06benste/northeastcarparks#readme",
+  "issue_tracker": "https://github.com/06benste/northeastcarparks/issues",
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "1.0.5"
+}
