@@ -176,7 +176,6 @@ SENSOR_DESCRIPTIONS: tuple[SensorDescription, ...] = (
         "spaces_free",
         _spaces_free,
         state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement="spaces",
         suggested_display_precision=0,
         whole_number=True,
     ),
