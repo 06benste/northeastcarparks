@@ -19,7 +19,7 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 
-from .api import CannotConnect, InvalidAuth, create_client
+from .api import CarParkStatic, CannotConnect, InvalidAuth, create_client, get_static_cache
 from .const import CONF_CARPARK_ID, CONF_PASSWORD, CONF_USERNAME, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
@@ -82,6 +82,7 @@ class NortheastCarparksConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
         """Initialize flow state."""
         self._credentials: dict[str, str] = {}
+        self._carparks: list[CarParkStatic] | None = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -127,7 +128,7 @@ class NortheastCarparksConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._credentials[CONF_PASSWORD],
             )
             try:
-                await client.async_get_carpark_list()
+                self._carparks = await client.async_get_carpark_list()
             except InvalidAuth:
                 errors["base"] = "invalid_auth"
             except CannotConnect:
@@ -154,23 +155,26 @@ class NortheastCarparksConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlowResult:
         """Select which car park to add."""
         errors: dict[str, str] = {}
-        client = create_client(
-            self.hass,
-            self._credentials[CONF_USERNAME],
-            self._credentials[CONF_PASSWORD],
-        )
 
-        try:
-            carparks = await client.async_get_carpark_list()
-        except InvalidAuth:
-            return await self.async_step_credentials()
-        except CannotConnect:
-            errors["base"] = "cannot_connect"
-            return self.async_show_form(step_id="carpark", errors=errors)
-        except Exception:
-            _LOGGER.exception("Unexpected error loading car park list")
-            errors["base"] = "cannot_connect"
-            return self.async_show_form(step_id="carpark", errors=errors)
+        if self._carparks is None:
+            client = create_client(
+                self.hass,
+                self._credentials[CONF_USERNAME],
+                self._credentials[CONF_PASSWORD],
+            )
+            try:
+                self._carparks = await client.async_get_carpark_list()
+            except InvalidAuth:
+                return await self.async_step_credentials()
+            except CannotConnect:
+                errors["base"] = "cannot_connect"
+                return self.async_show_form(step_id="carpark", errors=errors)
+            except Exception:
+                _LOGGER.exception("Unexpected error loading car park list")
+                errors["base"] = "cannot_connect"
+                return self.async_show_form(step_id="carpark", errors=errors)
+
+        carparks = self._carparks
 
         configured_ids = _get_configured_carpark_ids(self.hass)
         available_carparks = [
@@ -261,6 +265,7 @@ class NortheastCarparksConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected error reconfiguring UTMC credentials")
                 errors["base"] = "cannot_connect"
             else:
+                get_static_cache(self.hass).invalidate_all()
                 entry_ids = _async_update_all_entry_credentials(
                     self.hass,
                     user_input[CONF_USERNAME],

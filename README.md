@@ -8,7 +8,7 @@ Each configured car park appears as one device with sensors for capacity, occupa
 
 ## Requirements
 
-- Home Assistant **2024.1** or newer
+- Home Assistant **2024.11** or newer
 - A free **netraveldata.co.uk** account (see below)
 - Internet access to `www.netraveldata.co.uk`
 

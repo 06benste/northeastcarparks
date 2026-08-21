@@ -11,9 +11,10 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import CarParkData, CannotConnect, InvalidAuth, UTMCApiClient, create_client
-from .const import CONF_CARPARK_ID, CONF_PASSWORD, CONF_USERNAME, DOMAIN, MANUFACTURER, SCAN_INTERVAL_SECONDS
+from .const import CONF_CARPARK_ID, CONF_PASSWORD, CONF_USERNAME, DOMAIN, SCAN_INTERVAL_SECONDS
 
 _LOGGER = logging.getLogger(__name__)
+
 
 class NortheastCarparksCoordinator(DataUpdateCoordinator[CarParkData]):
     """Fetch car park data from UTMC."""
@@ -35,8 +36,11 @@ class NortheastCarparksCoordinator(DataUpdateCoordinator[CarParkData]):
         self.carpark_id = entry.data[CONF_CARPARK_ID]
 
     async def _async_update_data(self) -> CarParkData:
+        """Refresh dynamic occupancy every poll; static metadata uses a shared 24-hour cache."""
         try:
-            return await self.client.async_get_carpark_data(self.carpark_id)
+            static = await self.client.async_get_static_carpark(self.carpark_id)
+            dynamic = await self.client.async_get_dynamic_carpark(self.carpark_id)
+            return CarParkData(static=static, dynamic=dynamic)
         except InvalidAuth as err:
             raise ConfigEntryAuthFailed from err
         except CannotConnect as err:

@@ -10,11 +10,15 @@ API_STATIC_URL = "https://www.netraveldata.co.uk/api/v2/carpark/static"
 API_DYNAMIC_URL = "https://www.netraveldata.co.uk/api/v2/carpark/dynamic"
 
 SCAN_INTERVAL_SECONDS = 60
+STATIC_CACHE_TTL_SECONDS = 24 * 60 * 60
+
+API_RETRY_MAX_ATTEMPTS = 3
+API_RETRY_BASE_DELAY_SECONDS = 1
 
 MANUFACTURER = "NECA Tyne & Wear UTMC"
 
 # UTMC blocks requests without a recognizable User-Agent (403 otherwise).
-USER_AGENT = "HomeAssistant/NortheastCarParks/1.0.0"
+USER_AGENT = "HomeAssistant/NortheastCarParks/1.0.3"
 
 # Car parks with reliable live occupancy (UTMC / netraveldata.co.uk)
 LIVE_DATA_CARPARK_IDS: frozenset[str] = frozenset(
